@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <string name="hello">Hello World, MainaActivity!</string>
+    <string name="app_name">Yamba</string>
+    <string name="titleStatus">Статус</string>
+    <string name="hintText">Що на думці?</string>
+    <string name="buttonUpdate">Оновити</string>
+    <string name="charCounter">000</string>
+</resources>
