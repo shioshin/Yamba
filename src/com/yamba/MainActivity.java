@@ -2,12 +2,19 @@ package com.yamba;
 
 import winterwell.jtwitter.Twitter;
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements OnClickListener,
-		TextWatcher {
+		TextWatcher, OnSharedPreferenceChangeListener {
 
 	private static final String TAG = "StatusActivity";
 	private final int MAX_LENGTH = 140;
@@ -24,6 +31,7 @@ public class MainActivity extends Activity implements OnClickListener,
 	Button button;
 	TextView textCount;
 	Twitter twitter;
+	SharedPreferences prefs;
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -36,6 +44,9 @@ public class MainActivity extends Activity implements OnClickListener,
 		textCount = (TextView) findViewById(R.id.textCount);
 		button.setOnClickListener(this);
 
+		prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
+
 		textCount.setText(Integer.toString(MAX_LENGTH));
 		textCount.setTextColor(Color.GREEN);
 		editText.addTextChangedListener(this);
@@ -44,10 +55,41 @@ public class MainActivity extends Activity implements OnClickListener,
 		twitter.setAPIRootUrl("http://yamba.marakana.com/api");
 
 	}
+	
+	@SuppressWarnings("unused")
+	private Twitter getTwitter(){
+		if(twitter == null){
+			String username,password,url;
+			username = prefs.getString("username", "");
+			password = prefs.getString("password", "");
+			url = prefs.getString("url", "http://yamba.marakana.com/api");
+			
+			twitter = new Twitter(username, password);
+			twitter.setAPIRootUrl(url);
+		}
+		return twitter;
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.itemPrefs:
+			startActivity(new Intent(this, PrefsActivity.class));
+			break;
+		}
+		return true;
+	}
 
 	@Override
 	public void onClick(View v) {
-		twitter.setStatus(editText.getText().toString()); //
+		getTwitter().setStatus(editText.getText().toString()); 
 		Log.d(TAG, "onClicked");
 	}
 
@@ -99,5 +141,11 @@ public class MainActivity extends Activity implements OnClickListener,
 			super.onProgressUpdate(values);
 		}
 
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		twitter = null;
 	}
 }

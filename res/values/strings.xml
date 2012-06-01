@@ -7,5 +7,14 @@
     <string name="hintText">What\'s on your mind?</string>
     <string name="buttonUpdate">Update</string>
     <string name="charCounter">000</string>
+    <string name="titlePrefs">Preference</string>
+    <!-- Prefs Strings -->
+    <string name="titleUsername">Username</string>
+    <string name="summaryUsername">insert twitter name here</string>
+    <string name="titlePassword">Password</string>
+    <string name="summaryPassword">Twitter password please</string>
+    <string name="titleURL">Cloud URL</string>
+    <string name="summaryURL">Insert usable twitter url</string>
+    <!-- Menu Strings -->
 
 </resources>
