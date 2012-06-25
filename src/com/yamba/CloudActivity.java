@@ -43,8 +43,8 @@ public class CloudActivity extends Activity implements OnClickListener {
 		@Override
 		protected String doInBackground(String... params) {
 			try {
-				winterwell.jtwitter.Status status = twitter
-						.updateStatus(params[0]);
+				winterwell.jtwitter.Status status = ((YambaApplication) getApplication())
+						.getTwitter().updateStatus(params[0]);
 				return status.text;
 			} catch (Exception e) {
 				Log.e(TAG, e.toString());
