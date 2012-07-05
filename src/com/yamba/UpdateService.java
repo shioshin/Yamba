@@ -1,8 +1,5 @@
 package com.yamba;
 
-import java.util.List;
-
-import winterwell.jtwitter.TwitterException;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -12,7 +9,7 @@ public class UpdateService extends Service {
 	static final String TAG = "UpdaterService";
 
 	static final int DELAY = 60000; // a minute
-	private boolean runFlag = false; //
+	private boolean runFlag = false;
 	private Updater updater;
 	private YambaApplication application;
 
@@ -50,32 +47,24 @@ public class UpdateService extends Service {
 
 	private class Updater extends Thread {
 
-		List<winterwell.jtwitter.Status> timeline;
-
 		public Updater() {
 			super("UpdaterService-Updater");
 		}
 
-		@SuppressWarnings("deprecation")
 		public void run() {
 			UpdateService updaterService = UpdateService.this;
 			while (updaterService.runFlag) {
 				Log.d(TAG, "Updater running");
 				try {
-					// Some work goes here...
-					timeline = application.getTwitter().getFriendsTimeline();
-					// Loop over the timeline and print it out
-					for (winterwell.jtwitter.Status status : timeline) { //
-						Log.d(TAG, String.format("%s: %s", status.user.name,
-								status.text)); //
+					YambaApplication yamba = (YambaApplication) updaterService
+							.getApplication();
+					int newUpdates = yamba.fetchStatusUpdates(); //
+					if (newUpdates > 0) { //
+						Log.d(TAG, "We have a new status");
 					}
-
-					Log.d(TAG, "Updater ran");
 					Thread.sleep(DELAY);
 				} catch (InterruptedException e) {
 					updaterService.runFlag = false;
-				} catch (TwitterException e) {
-					Log.e(TAG, "Failed to connect to twitter service", e);
 				}
 			}
 		}
